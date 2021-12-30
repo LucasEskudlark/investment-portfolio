@@ -127,8 +127,11 @@ public class Program {
 
 
                         try (BufferedWriter bw = new BufferedWriter(new FileWriter(f, true))){
+                                bw.write(assetName +
+                                        "," + amount +
+                                        "," + String.format("%.2f", pricePerUnit) +
+                                        "," + purchaseDateStr);
                                 bw.newLine();
-                                bw.write(assetName + "," + amount + "," + String.format("%.2f", pricePerUnit) + "," + purchaseDateStr);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -139,7 +142,24 @@ public class Program {
                         System.out.print("Enter asset name: ");
                         String sellAssetName = sc.nextLine();
 
-                        portfolio.sellAsset(sellAssetName);
+                        boolean success = portfolio.sellAsset(sellAssetName);
+
+                        if (success) {
+                            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                            try (BufferedWriter bw = new BufferedWriter(new FileWriter(f))){
+                                for (Asset asset : portfolio.getAssetList()) {
+                                    String purchaseDateStr = sdf.format(asset.getPurchaseDate());
+                                    bw.write(asset.getAssetName() +
+                                            "," + asset.getAmount() +
+                                            "," + String.format("%.2f", asset.getPricePerUnit()) +
+                                            "," + purchaseDateStr);
+                                    bw.newLine();
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
                     }
 
                     // View invested assets option

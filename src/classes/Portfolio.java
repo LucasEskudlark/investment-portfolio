@@ -3,7 +3,6 @@ package classes;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Scanner;
 
 public class Portfolio {
@@ -48,9 +47,10 @@ public class Portfolio {
     }
 
     // Method to sell assets/shares
-    public void sellAsset(String assetName){
+    public boolean sellAsset(String assetName){
         Scanner sc = new Scanner(System.in);
         List<String> names = new ArrayList<>();
+        boolean success = false;
 
         for (Asset asset : assetList) {
             names.add(asset.getAssetName());
@@ -69,6 +69,11 @@ public class Portfolio {
                     } else{
                         // If only part of the total amount is going to be sold, set new amount
                         asset.setAmount(asset.getAmount() - amount);
+                        success = true;
+
+                        if (asset.getAmount() == 0) {
+                            assetList.remove(asset);
+                        }
                     }
                 }
             }
@@ -77,6 +82,7 @@ public class Portfolio {
             System.out.println("\nAsset not found");
         }
 
+        return success;
 
     }
 
@@ -90,6 +96,7 @@ public class Portfolio {
                 System.out.println(
                         "Asset code/name: " + asset.getAssetName() +
                                 " | Price per Unit: U$" + asset.getPricePerUnit() +
+                                " | Amount: " + asset.getAmount() +
                                 " | Total invested: U$" + String.format("%.2f", asset.getTotalInvested()) +
                                 " | Purchase date: " + sdf.format(asset.getPurchaseDate()));
             }
