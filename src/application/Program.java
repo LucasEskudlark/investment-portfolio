@@ -4,7 +4,6 @@ import classes.Asset;
 import classes.Portfolio;
 
 import java.io.*;
-import java.sql.SQLOutput;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -26,6 +25,7 @@ public class Program {
 
 
         while (true) {
+            // Create a menu of options
             int option = menu("Create portfolio", "Load portfolio", "Exit");
 
             // Option 1 - User wants to create a portfolio
@@ -48,7 +48,7 @@ public class Program {
                     System.out.println("Error creating portfolio: Portfolio '" + name + "' already exists");
                 } else {
                     try (BufferedWriter bw = new BufferedWriter(new FileWriter(f))) {
-                        // Inform sucess
+                        // Inform success
                         System.out.println("Portfolio created successfully!");
                     } catch (IOException e) {
                         System.out.println("Error creating portfolio: " + e.getMessage());
@@ -79,11 +79,13 @@ public class Program {
                     System.out.println("\nPortfolio '" + name + "' loaded successfully!");
                     Portfolio portfolio = new Portfolio();
 
+                    // Read portfolio file using BufferedReader
                     try (BufferedReader br = new BufferedReader(new FileReader(f))){
-
-
                         String itemStr = br.readLine();
                         while (itemStr != null) {
+                            /* Create an array to get each element as all info is stored as
+                            String and the elements/variables are separated by ",".
+                             */
                             String[] fields = itemStr.split(",");
 
                             String assetName = fields[0];
@@ -94,6 +96,7 @@ public class Program {
                             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
                             Date purchaseDate = sdf.parse(purchaseDateStr);
 
+                            // Instantiate the object and add it to the portfolio
                             Asset asset = new Asset(assetName, amount, pricePerUnit, purchaseDate);
                             portfolio.addAsset(asset);
 
@@ -103,7 +106,7 @@ public class Program {
                         e.printStackTrace();
                     }
 
-
+                    // Create a menu of possible operations to do when the archive is loaded
                     int operation = menu("Add asset", "Sell asset", "View invested assets", "Portfolio overview");
 
                     // Add asset option
@@ -120,12 +123,12 @@ public class Program {
                         System.out.print("Enter price per unit: U$");
                         double pricePerUnit = sc.nextDouble();
 
-                        // Add purchase date
+                        // Add purchase date to a variable and then convert it to String
                         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
                         Date purchaseDate = new Date();
                         String purchaseDateStr = sdf.format(purchaseDate);
 
-
+                        // Write all the variables as String and separated by "," to the .txt file
                         try (BufferedWriter bw = new BufferedWriter(new FileWriter(f, true))){
                                 bw.write(assetName +
                                         "," + amount +
@@ -139,11 +142,13 @@ public class Program {
 
                     // Sell asset option
                     if (operation == 2) {
+                        // Request asset name
                         System.out.print("Enter asset name: ");
                         String sellAssetName = sc.nextLine();
 
                         boolean success = portfolio.sellAsset(sellAssetName);
 
+                        // If the operation done (sell asset) went successful, re-write the file with new data
                         if (success) {
                             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
                             try (BufferedWriter bw = new BufferedWriter(new FileWriter(f))){
@@ -162,12 +167,12 @@ public class Program {
 
                     }
 
-                    // View invested assets option
+                    // View invested assets option (Call investedAssets method)
                     if (operation == 3) {
                         portfolio.investedAssets();
                     }
 
-                    // Portfolio overview
+                    // Portfolio overview (Call summary method)
                     if (operation == 4) {
                         portfolio.Summary();
                     }
@@ -178,11 +183,7 @@ public class Program {
             if (option == 3) {
                 break;
             }
-
-
         }
-
-
     sc.close();
     }
 

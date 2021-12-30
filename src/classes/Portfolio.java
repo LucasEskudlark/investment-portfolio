@@ -71,17 +71,16 @@ public class Portfolio {
                         asset.setAmount(asset.getAmount() - amount);
                         success = true;
 
+                        // If all shares of the assets are sold, remove the asset from the portfolio
                         if (asset.getAmount() == 0) {
                             assetList.remove(asset);
                         }
                     }
                 }
             }
-
         } else {
             System.out.println("\nAsset not found");
         }
-
         return success;
 
     }
